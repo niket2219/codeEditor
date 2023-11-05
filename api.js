@@ -13,7 +13,7 @@ app.use("/codemirror-5.65.15", express.static("./codemirror-5.65.15"));
 
 app.get("/", (req, res) => {
   compiler.flush(function () {});
-  res.sendFile("./index.html");
+  res.sendFile("index.html", { root: __dirname });
 });
 
 app.post("/compile", (req, res) => {

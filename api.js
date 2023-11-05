@@ -9,14 +9,11 @@ const compiler = require("compilex");
 const options = { stats: true };
 compiler.init(options);
 
-app.use(
-  "/codemirror-5.65.15",
-  express.static("C:/Users/niket/OneDrive/Desktop/codeX/codemirror-5.65.15")
-);
+app.use("/codemirror-5.65.15", express.static("./codemirror-5.65.15"));
 
 app.get("/", (req, res) => {
   compiler.flush(function () {});
-  res.sendFile("C:/Users/niket/OneDrive/Desktop/codeX/index.html");
+  res.sendFile("./index.html");
 });
 
 app.post("/compile", (req, res) => {

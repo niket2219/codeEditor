@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="codemirror-5.65.15/lib/codemirror.css" />
+    <script src="codemirror-5.65.15/lib/codemirror.js"></script>
+    <script src="codemirror-5.65.15/mode/clike/clike.js"></script>
+    <script src="codemirror-5.65.15/mode/python/python.js"></script>
+    <link rel="stylesheet" href="codemirror-5.65.15/theme/dracula.css" />
+    <script src="codemirror-5.65.15/addon/edit/closebrackets.js"></script>
+    <title>codeIt</title>
+  </head>
+  <body>
+    <div class="row m-3">
+      <div class="col">
+        <div class="d-flex justify-content-between mb-2 bg-dark rounded p-2">
+          <div class="col-auto w-22">
+            <label class="visually-hidden" for="autoSizingSelect"
+              >Preference</label
+            >
+            <select class="form-select" id="autoSizingSelect">
+              <option selected>Choose Language....</option>
+              <option value="Java">Java</option>
+              <option value="Cpp">C/C++</option>
+              <option value="Python">Python</option>
+            </select>
+          </div>
+          <div>
+            <button type="button" class="btn btn-light" id="runcode">
+              <i class="bi bi-play-fill"></i>
+            </button>
+          </div>
+        </div>
+        <textarea
+          type="text"
+          id="editor"
+          class="form-control"
+          aria-label="First name"
+        >
+        </textarea>
+      </div>
+      <div class="col d-flex flex-column bg-dark rounded px-4">
+        <div class="h-50">
+          <label for="input" class="text-light mt-4 mb-2">Input</label>
+          <textarea
+            type="text"
+            id="input"
+            class="form-control h-75"
+            aria-label="Last name"
+          >
+          </textarea>
+        </div>
+        <div class="h-50">
+          <label for="output" class="text-light mb-2">Output</label>
+          <textarea
+            type="text"
+            id="output"
+            class="form-control h-75"
+            aria-label="Last name"
+          >
+          </textarea>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+      cursorHeight: 0.85,
+      mode: "text/x-c++src",
+      theme: "dracula",
+      lineNumbers: true,
+      autoCloseBrackets: true,
+    });
+
+    editor.setValue(`// your code goes here`);
+
+    var width = window.innerWidth;
+    editor.setSize(0.7 * width, "550");
+
+    var option = document.getElementById("autoSizingSelect");
+
+    option.addEventListener("change", function () {
+      if (option.value == "Java") {
+        editor.setOption("mode", "text/x-java");
+        editor.setValue(
+          `class Main {\npublic static void main(String[] args) {\n     System.out.println("Hello, World!"); \n}\n}`
+        );
+      } else if (option.value == "Cpp") {
+        editor.setOption("mode", "text/x-c++src");
+        editor.setValue(`#include <iostream>\n\nint main() {\n      std::cout <<script "Hello World!";\n      return 0;\n}
+                          `);
+      } else if (option.value == "Python") {
+        editor.setOption("mode", "text/x-python");
+        editor.setValue(`print("hello world !!")`);
+      }
+    });
+
+    var input = document.getElementById("input");
+    var output = document.getElementById("output");
+    var run = document.getElementById("runcode");
+    var code;
+
+    run.addEventListener("click", async function () {
+      code = {
+        code: editor.getValue(),
+        input: input.value,
+        lang: option.value,
+      };
+
+      var res = await fetch("http://localhost:8000/compile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(code),
+      });
+
+      var result = await res.json();
+      // console.log(result);
+      output.value = result.output;
+    });
+  </script>
+</html>

@@ -1,9 +1,12 @@
 const express = require("express");
 const app = express();
+import cors from "cors";
 const PORT = process.env.PORT || 8000;
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
+
+app.use(cors());
 
 const compiler = require("compilex");
 const options = { stats: true };

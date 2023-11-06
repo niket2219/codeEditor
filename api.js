@@ -1,23 +1,8 @@
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 8000;
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
-
-app.use(function (req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:9000");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  next();
-});
 
 const compiler = require("compilex");
 const options = { stats: true };
@@ -122,6 +107,6 @@ app.post("/compile", (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(8000, () => {
   console.log("listening successfully");
 });
